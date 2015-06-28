@@ -29,7 +29,7 @@ object List {
 
   def tail[A](list: List[A]): List[A] = list match {
     case Nil => Nil
-//    case Cons(head,Nil)=>Nil
+    //    case Cons(head,Nil)=>Nil
     case Cons(head, tail) => tail
   }
 
@@ -43,9 +43,19 @@ object List {
     else drop(tail(l), n - 1)
   }
 
-  def dropWhile[A](l: List[A], f: A => Boolean): List[A]= l match {
+  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = l match {
     case Nil => Nil
-    case Cons(head,tail) if(f(head)) => dropWhile(tail,f)
+    case Cons(head, tail) =>
+      if (f(head)) {
+        dropWhile(tail, f)
+      } else {
+        Cons(head, dropWhile(tail, f))
+      }
+  }
+
+  def append[A](a1: List[A], a2: List[A]): List[A] = a1 match {
+    case Nil => a2
+    case Cons(h, t) => Cons(h, append(t, a2))
   }
 }
 
@@ -69,7 +79,13 @@ object dataStructureApp extends App {
   val list3 = List(1)
   println(List.tail(list3))
 
-  val afterDrop = List.drop(list,2)
+  val afterDrop = List.drop(list, 2)
   println(afterDrop)
+
+  val lessThanFour = (x: Int) => x < 4
+
+  val afterDropWithPredicate = List.dropWhile(list, lessThanFour)
+
+  println(afterDropWithPredicate)
 
 }
