@@ -116,9 +116,23 @@ object List {
     foldLeft(l, (b: B) => b)((g, a: A) => b => g(f(a, b)))(z)
 
   def foldRightViaFoldLeft_2[A, B](l: List[A], z: B)(f: (A, B) => B): B = {
-    val nest = (g:(B=>B), a: A) => (b:B) => g(f(a, b))
+    val nest = (g: (B => B), a: A) => (b: B) => g(f(a, b))
     val tmp: B => B = foldLeft(l, (b: B) => b)(nest)
     tmp(z)
+  }
+
+  @annotation.tailrec
+  def startWith[A](l: List[A], prefix: List[A]): Boolean = (l, prefix) match {
+    case (_, Nil) => true
+    case (Cons(h, t), Cons(h2, t2)) if h == h2 => startWith(t, t2)
+    case _ => false
+  }
+
+  @annotation.tailrec
+  def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = sup match {
+    case Nil => sub == Nil
+    case _ if (startWith(sup, sub)) => true
+    case Cons(h, t) => hasSubsequence(t, sub)
   }
 
 
