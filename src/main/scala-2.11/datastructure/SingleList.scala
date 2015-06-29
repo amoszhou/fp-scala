@@ -68,6 +68,60 @@ object List {
     case Nil => a2
     case Cons(h, t) => Cons(h, append(t, a2))
   }
+
+  def foldRight[A, B](as: List[A], z: B)(f: (A, B) => B): B = as match {
+    case Nil => z
+    case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+  }
+
+  def sum2(nx: List[Int]) = foldRight(nx, 1)(_ + _)
+
+  def product2(nx: List[Double]) = foldRight(nx, 1.0)(_ * _)
+
+
+  /**
+   * exercise3.9
+   * @param xs
+   * @tparam A
+   * @return
+   */
+  def length[A](xs: List[A]): Int = foldRight(xs, 0)((_, acc) => acc + 1)
+
+
+  /**
+   * exercise3.10
+   * @param as
+   * @param z
+   * @param f
+   * @tparam A
+   * @tparam B
+   * @return
+   */
+  def foldLeft[A, B](as: List[A], z: B)(f: (B, A) => B): B = as match {
+    case Nil => z
+    case Cons(head, tail) => foldLeft(tail, f(z, head))(f)
+  }
+
+  /**
+   * 3.12
+   * @param ns
+   * @tparam A
+   * @return
+   */
+  def reverse[A](ns: List[A]): List[A] = foldLeft(ns, List[A]())((h: List[A], t: A) => Cons(t, h))
+
+  def foldRightViaFoldLeft[A, B](as: List[A], z: B)(f: (A, B) => B): B = foldLeft(reverse(as), z)((t, h) => f(h, t))
+
+  def foldRightViaFoldLeft_1[A, B](l: List[A], z: B)(f: (A, B) => B): B =
+    foldLeft(l, (b: B) => b)((g, a: A) => b => g(f(a, b)))(z)
+
+  def foldRightViaFoldLeft_2[A, B](l: List[A], z: B)(f: (A, B) => B): B = {
+    val nest = (g:(B=>B), a: A) => (b:B) => g(f(a, b))
+    val tmp: B => B = foldLeft(l, (b: B) => b)(nest)
+    tmp(z)
+  }
+
+
 }
 
 object dataStructureApp extends App {
@@ -79,6 +133,7 @@ object dataStructureApp extends App {
     case Cons(h, t) => h + List.sum(t)
     case _ => 101
   }
+
   println(x)
 
   val list = List(8, 1, 2, 3, 4, 5, 6, 7)
