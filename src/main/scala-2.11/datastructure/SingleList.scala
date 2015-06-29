@@ -43,14 +43,25 @@ object List {
     else drop(tail(l), n - 1)
   }
 
-  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = l match {
-    case Nil => Nil
-    case Cons(head, tail) =>
-      if (f(head)) {
-        dropWhile(tail, f)
-      } else {
-        Cons(head, dropWhile(tail, f))
-      }
+  /**
+   * 从头至尾删除满足条件的元素，一旦碰到不满足的元素，则终止
+   * @param l
+   * @param f
+   * @tparam A
+   * @return
+   */
+  def dropWhile[A](l: List[A])(f: A => Boolean): List[A] = l match {
+    //    这样写，是Filter功能，而不是dropWhile
+    //    case Nil => Nil
+    //    case Cons(head, tail) =>
+    //      if (f(head)) {
+    //        dropWhile(tail, f)
+    //      } else {
+    //        Cons(head, dropWhile(tail, f))
+    //      }
+    case Cons(head, tail) if f(head) => dropWhile(tail)(f)
+    case _ => l
+
   }
 
   def append[A](a1: List[A], a2: List[A]): List[A] = a1 match {
@@ -70,7 +81,7 @@ object dataStructureApp extends App {
   }
   println(x)
 
-  val list = List(1, 2, 3, 4, 5, 6, 7)
+  val list = List(8, 1, 2, 3, 4, 5, 6, 7)
   println(List.tail(list))
 
   val list2 = Nil
@@ -82,10 +93,16 @@ object dataStructureApp extends App {
   val afterDrop = List.drop(list, 2)
   println(afterDrop)
 
-  val lessThanFour = (x: Int) => x < 4
-
-  val afterDropWithPredicate = List.dropWhile(list, lessThanFour)
+  /**
+   * dropWhile Test
+   */
+  val afterDropWithPredicate = List.dropWhile(list)((x: Int) => x < 4)
 
   println(afterDropWithPredicate)
 
+  /**
+   * scala类库自带的List的dropWhile功能测试测试
+   */
+  val scalaList = scala.collection.immutable.List(8, 1, 2, 3, 4, 5)
+  println(scalaList.dropWhile(_ < 4))
 }
