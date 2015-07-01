@@ -1,5 +1,7 @@
 package exception
 
+import scala.util.Try
+
 /**
  * Created by amoszhou on 15/6/30.
  */
@@ -15,7 +17,7 @@ sealed trait Option[+A] {
     case Some(value) => value
   }
 
-  def flatMap[B](f: A => Option[B]): Option[B] = map(f).getOrElse(None)
+  def flatMap[B](f: A => Option[B]): Option[B] = this.map(f).getOrElse(None)
 
   def orElse[B >: A](ob: => Option[B]): Option[B] = this.map(Some(_)).getOrElse(ob)
 
@@ -47,4 +49,25 @@ object Option {
 
 
   def lift[A, B](f: A => B): Option[A] => Option[B] = _ map (f)
+
+  def map2[A, B, C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = {
+    a.flatMap(v1 => b.map((v2: B) => f(v1, v2)))
+
+    //    for {
+    //      v1 <- a
+    //      v2 <- b
+    //    } yield f(v1, v2)
+  }
+
+
+}
+
+object TestApp extends App {
+  def sequence[A](a: List[Option[A]]): Option[List[A]] = a match {
+    case Nil => Some(Nil) //Can't use None
+    case h :: t => h flatMap (hh => sequence(t) map (hh :: _))
+  }
+
+  val l = List(Some(1), Some(2), Some(3), Some(5))
+  println(sequence(l))
 }

@@ -1,4 +1,4 @@
-import org.scalatest.{FunSuite, Matchers, FlatSpec}
+import org.scalatest.{FunSuite, Matchers}
 import datastructure._
 
 /**
@@ -6,8 +6,6 @@ import datastructure._
  */
 class DataStructureSpec extends FunSuite with Matchers {
 
-
-  test("foldRight")
 
   test("reverse") {
     val list = List(1, 2, 3)
